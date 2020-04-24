@@ -1,6 +1,6 @@
-# Express Boilerplate
+# GD #6 - Gestión de tareas con React
 
-Tarea 6 de la materia de Laboratorio de Desarrollo de Aplicaciones Web.
+Tarea 6 de la materia de Laboratorio de Desarrollo de Aplicaciones Web realizada por Alfredo Prado Cajiga.
 
 ## Información Importante
 
