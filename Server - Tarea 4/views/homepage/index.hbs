@@ -1,0 +1,135 @@
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Server is running!</h1>
+      <h4>Check http://localhost:3000/ to visit the main site.</h4>
+    </div>
+  </div>
+</main>
+
+<script>
+  function saveTask()
+  {
+    let description = document.getElementById('taskDescription').value;
+
+    let body = {
+      method:'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({description: description})
+    };
+
+    fetch('/tasks', body)
+      .then(response => {
+        if(response.ok){
+          return response.json();
+        } else {
+          throw "Error en la llamada Ajax"
+        }
+      })
+      .then(task => {
+        document.getElementById('taskDescription').value = '';
+        addTask(task);
+      })
+      .catch(error => {
+        console.log('Error: ', error)
+      })
+  }
+
+  function addTask(task) 
+  {
+    let html = 
+    `
+    <div class="card my-3" id="card${task.id}">
+        <div class="card-body">
+          <p class="card-text">${ task.description }</p>
+          <a href="javascript:;" class="card-link" onclick="taskDelete(${task.id});">Delete</a>
+            <form method="POST" action="/updateTaskStatus/${task.id}" id="mi-form${task.id}">
+            <input type="hidden" value="${task.id}" id="taskId${task.id}" name="id">
+              <a href="javascript:;" class="card-link" onclick="taskDone(${task.id});">Done</a>
+            </form>
+        </div>
+      </div>
+    `;
+
+    let node = document.createRange().createContextualFragment(html);
+    document.getElementById('taskList').prepend(node);
+  }
+
+//Función para indicar que una tarea está hecha
+  function taskDone(id) 
+  {
+    let task = id;
+
+    let body = {
+      method:'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({id: task})
+    };
+  
+    var url = "/updateTaskStatus/" + task;
+
+    fetch(url, body)
+      .then(response => {
+        if(response.ok){
+          return response.json();
+        } else {
+          throw "Error en la llamada Ajax"
+        }
+      }).then(task => {
+        //Cambios en el HTML dependiendo del ID
+        let card = "card" + task.id;
+        document.getElementById(card).classList.add("bg-light"); 
+
+        let form = "mi-form" + task.id;
+        document.getElementById(form).remove();
+      })
+      .catch(error => {
+        console.log('Error: ', error)
+      })
+      
+  }
+
+//Función para borrar una tarea
+  function taskDelete(id)
+  {
+    let task = id;
+
+    let body = {
+      method:'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({id: task})
+    };
+  
+    var url = "/deleteTask/" + $.param({id: task});
+
+    fetch(url, body)
+      .then(response => {
+        if(response.ok){
+          return response.json();
+        } else {
+          throw "Error en la llamada Ajax"
+        }
+    })
+    .then(task => {
+      //Se elimina el div de la tarea eliminada
+        let element = "card" + task.id;
+        document.getElementById(element).remove();
+      })
+    .catch(error => {
+      console.log('Error: ', error)
+    })
+
+  }
+
+    
+  
+</script>
