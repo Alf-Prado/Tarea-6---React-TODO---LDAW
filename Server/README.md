@@ -8,6 +8,8 @@ El proyecto ya viene configurado con algunos paquetes comunes que utilizamos.
 
 ```shell
 npm install
+
+knex migrate:latest
 ```
 
 ## Ejecución
